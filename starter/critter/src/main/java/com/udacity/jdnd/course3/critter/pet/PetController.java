@@ -1,6 +1,8 @@
 package com.udacity.jdnd.course3.critter.pet;
 
+import com.udacity.jdnd.course3.critter.entity.Customer;
 import com.udacity.jdnd.course3.critter.entity.Pet;
+import com.udacity.jdnd.course3.critter.user.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +22,22 @@ public class PetController {
     @Autowired
     PetService petService;
 
+    @Autowired
+    UserService userService;
+
     @PostMapping
     public PetDTO savePet(@RequestBody PetDTO petDTO) {
+       Optional<Customer> customer = userService.getCustomerById(petDTO.getOwnerId());
         Pet pet = new Pet();
         BeanUtils.copyProperties(petDTO,pet);
-        pet = petService.save(pet,petDTO.getOwnerId());
-        BeanUtils.copyProperties(pet,petDTO);
-        return petDTO;
+        if (customer.isPresent()) {
+            pet.setCustomer(customer.get());
+        }
+        pet =  petService.save(pet);
+        PetDTO petDTO1 = new PetDTO();
+        BeanUtils.copyProperties(pet,petDTO1);
+        petDTO1.setOwnerId(pet.getCustomer().getId());
+        return petDTO1;
     }
 
     @GetMapping("/{petId}")
@@ -55,6 +66,7 @@ public class PetController {
 
     @GetMapping("/owner/{ownerId}")
     public List<PetDTO> getPetsByOwner(@PathVariable long ownerId) {
+        List<Pet> pets1 = petService.getPets();
         List<Pet> pets = petService.getPetByOwner(ownerId);
         List<PetDTO> petsDTO = new ArrayList<PetDTO>();
         pets.stream().forEach(pet -> {
