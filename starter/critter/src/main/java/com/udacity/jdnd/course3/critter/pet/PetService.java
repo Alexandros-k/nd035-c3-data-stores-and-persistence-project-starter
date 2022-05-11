@@ -18,10 +18,9 @@ public class PetService {
     @Autowired
     CustomerRepository customerRepository;
 
-    public Pet save(PetDTO petDTO) {
-       Optional<Customer> customer =customerRepository.findById(petDTO.getOwnerId());
-       Pet pet = new Pet();
-        BeanUtils.copyProperties(petDTO,pet);
+    public Pet save(Pet pet) {
+       Optional<Customer> customer =customerRepository.findById(pet.getCustomer().getId());
+      //TODO see if its needed
         if (customer.isPresent()) {
             pet.setCustomer(customer.get());
         }
