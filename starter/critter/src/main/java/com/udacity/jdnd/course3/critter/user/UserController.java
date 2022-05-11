@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Handles web requests related to Users.
@@ -28,14 +30,28 @@ public class UserController {
 
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
-        Customer customer = userService.saveCustomer(customerDTO);
+        Customer customer = new Customer();
+        BeanUtils.copyProperties(customerDTO, customer);
+        customer = userService.saveCustomer(customer);
         BeanUtils.copyProperties(customer,customerDTO);
         return customerDTO;
     }
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
-       return userService.getAllCustomers();
+        List<Customer> customers = userService.getAllCustomers();
+        List<CustomerDTO> customerDTOS = new ArrayList<>();
+        customers.forEach(customer -> {
+                    CustomerDTO customerDTO = new CustomerDTO();
+                    BeanUtils.copyProperties(customer, customerDTO);
+                    if (customer.getPets() != null) {
+                        List<Long> petIds = customer.getPets().stream().map(pet -> pet.getId()).collect(Collectors.toList());
+                        customerDTO.setPetIds(petIds);
+                    }
+                    customerDTOS.add(customerDTO);
+                }
+        );
+        return customerDTOS;
     }
 
     @GetMapping("/customer/pet/{petId}")
