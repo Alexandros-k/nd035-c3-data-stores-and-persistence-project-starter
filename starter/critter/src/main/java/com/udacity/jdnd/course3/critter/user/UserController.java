@@ -56,13 +56,20 @@ public class UserController {
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId){
-       return userService.getOwnerByPet(petId);
+        Customer customer = userService.getOwnerByPet(petId);
+        CustomerDTO customerDTO = new CustomerDTO();
+        BeanUtils.copyProperties(customer,customerDTO);
+        List<Long> petIds = customer.getPets().stream().map(pet -> pet.getId()).collect(Collectors.toList());
+        customerDTO.setPetIds(petIds);
+        return customerDTO;
     }
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        Employee employ = userService.saveEmployee(employeeDTO);
-        BeanUtils.copyProperties(employ,employeeDTO);
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee = userService.saveEmployee(employee);
+        BeanUtils.copyProperties(employee,employeeDTO);
         return employeeDTO;
     }
 
@@ -81,7 +88,17 @@ public class UserController {
 
     @GetMapping("/employee/availability")
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
-        return userService.findEmployeesForService(employeeDTO);
+        Employee employee = new Employee();
+        DayOfWeek localDate = employeeDTO.getDate().getDayOfWeek();
+        employee.setSkills(employeeDTO.getSkills());
+        Set<Employee> employees = userService.findEmployeesForService(employee,localDate);
+        List<EmployeeDTO> employeeDTOS = new ArrayList<>();
+        employees.stream().forEach(employee1 -> {
+            EmployeeDTO employeeDTO1 = new EmployeeDTO();
+            BeanUtils.copyProperties(employee1, employeeDTO1);
+            employeeDTOS.add(employeeDTO1);
+        });
+         return employeeDTOS;
     }
 
 }
