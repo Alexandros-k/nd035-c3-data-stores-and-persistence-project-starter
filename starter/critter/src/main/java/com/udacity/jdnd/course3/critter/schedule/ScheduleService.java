@@ -35,14 +35,14 @@ public class ScheduleService {
     }
 
     public List<Schedule> getScheduleForPet(long petId) {
-        return scheduleRepository.findScheduleByPetId(petId);
+        return scheduleRepository.findByPet_Id(petId);
     }
 
     public List<Schedule> getScheduleForEmployee(long employeeId) {
-        return scheduleRepository.findScheduleByEmployeeId(employeeId);
+        return scheduleRepository.findByEmployee_Id(employeeId);
     }
 
     public List<Schedule> getScheduleForCustomer(long customerId) {
-        return scheduleRepository.findScheduleByCustomerId(customerId);
+        return scheduleRepository.findByCustomer_Id(customerId);
     }
 }
