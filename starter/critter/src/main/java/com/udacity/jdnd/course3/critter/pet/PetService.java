@@ -22,7 +22,7 @@ public class PetService {
        Optional<Customer> customer =customerRepository.findById(petDTO.getOwnerId());
        Pet pet = new Pet();
         BeanUtils.copyProperties(petDTO,pet);
-        if (!customer.isEmpty()) {
+        if (customer.isPresent()) {
             pet.setCustomer(customer.get());
         }
        return petRepository.save(pet);

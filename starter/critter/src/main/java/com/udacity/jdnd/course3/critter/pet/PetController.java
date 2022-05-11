@@ -24,7 +24,7 @@ public class PetController {
     public PetDTO savePet(@RequestBody PetDTO petDTO) {
         Pet pet = new Pet();
         BeanUtils.copyProperties(petDTO,pet);
-       pet = petService.save(petDTO);
+        pet = petService.save(petDTO);
         BeanUtils.copyProperties(pet,petDTO);
         return petDTO;
     }
@@ -33,11 +33,12 @@ public class PetController {
     public PetDTO getPet(@PathVariable long petId) {
        Optional<Pet> pet = petService.getPet(petId);
        PetDTO petDTO = new PetDTO();
-        if (pet.get() != null) {
+        if (pet.isPresent()) {
             BeanUtils.copyProperties(pet.get(),petDTO);
+            petDTO.setOwnerId(pet.get().getCustomer().getId());
             return petDTO;
         }
-       return null;
+       return null; //TODO custom error
     }
 
     @GetMapping
@@ -59,6 +60,7 @@ public class PetController {
         pets.stream().forEach(pet -> {
             PetDTO petDTO = new PetDTO();
             BeanUtils.copyProperties(pet, petDTO);
+            petDTO.setOwnerId(pet.getCustomer().getId());
             petsDTO.add(petDTO);
         });
          return petsDTO;
