@@ -18,17 +18,17 @@ import java.util.Set;
 @AllArgsConstructor
 public class Schedule {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "schedule_employee",
             joinColumns = { @JoinColumn(name = "schedule_id")},
             inverseJoinColumns = { @JoinColumn(name = "employee_id")}
     )
     private List<Employee> employee;
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinTable(
             name = "schedule_pet",
             joinColumns = { @JoinColumn(name = "schedule_id")},

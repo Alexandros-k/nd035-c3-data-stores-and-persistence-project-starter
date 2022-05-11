@@ -1,5 +1,6 @@
 package com.udacity.jdnd.course3.critter.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.udacity.jdnd.course3.critter.pet.PetType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Pet {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private PetType type;
@@ -26,5 +27,6 @@ public class Pet {
 
     @ManyToOne
     @JoinColumn(name = "ownerId")
+    @JsonBackReference
     private Customer customer;
 }

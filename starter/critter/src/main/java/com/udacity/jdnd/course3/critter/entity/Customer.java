@@ -1,6 +1,6 @@
 package com.udacity.jdnd.course3.critter.entity;
 
-import com.udacity.jdnd.course3.critter.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +15,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer extends User {
-
+public class Customer{
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "customer_seq",sequenceName = "customer_seq",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "customer_seq")
     private Long id;
 
     @Nationalized
@@ -27,6 +27,7 @@ public class Customer extends User {
     private String notes;
 
     @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Pet> pets;
 
 }
