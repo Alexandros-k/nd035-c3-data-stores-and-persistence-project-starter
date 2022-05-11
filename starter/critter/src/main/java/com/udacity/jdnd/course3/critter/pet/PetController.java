@@ -24,7 +24,7 @@ public class PetController {
     public PetDTO savePet(@RequestBody PetDTO petDTO) {
         Pet pet = new Pet();
         BeanUtils.copyProperties(petDTO,pet);
-        pet = petService.save(pet);
+        pet = petService.save(pet,petDTO.getOwnerId());
         BeanUtils.copyProperties(pet,petDTO);
         return petDTO;
     }

@@ -18,9 +18,9 @@ public class PetService {
     @Autowired
     CustomerRepository customerRepository;
 
-    public Pet save(Pet pet) {
-       Optional<Customer> customer =customerRepository.findById(pet.getCustomer().getId());
-      //TODO see if its needed
+    public Pet save(Pet pet, long ownerId) {
+       Optional<Customer> customer =customerRepository.findById(ownerId);
+      //chce
         if (customer.isPresent()) {
             pet.setCustomer(customer.get());
         }
